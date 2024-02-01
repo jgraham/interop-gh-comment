@@ -16,8 +16,8 @@ REASONS = {
     "Missing Infrastructure": "We are still missing test infrastructure for testing {proposal_name}. Please note this should not be taken as a comment on the technology as a whole, and once the test infrastructure issues are resolved, we would welcome  this proposal being resubmitted for a future round of Interop.",
     "Missing Tests": "We could not find any tests for {proposal_name} in the Web Platform Tests.  Such tests are crucial for measuring interoperability status and progress.  Once there are WPT entries covering this proposal, we welcome it being resubmitted for a future round of Interop.",
     "Overly Vague or Broad": "We believe this proposal is too broad, and that as such, Interop 2024 is not the right venue to do this {proposal_type}.",
-    "Limited Resources / Prioritization": "We wanted to let you know that this proposal was not selected to be part of Interop 2024. This is because we got many more proposals than we could include in this year's project. Note that individual vendors may nevertheless choose to advance work in this area during the forthcoming year. We would welcome this proposal being resubmitted again next year if necessary.",
+    "Limited Resources / Prioritization": "This is because we got many more proposals than we could include in this year's project. Note that individual vendors may nevertheless choose to advance work in this area during the forthcoming year. We would welcome this proposal being resubmitted again next year if necessary.",
     "(other)": "There are still unresolved issues around {proposal_name}. We would welcome this proposal being resubmitted for a future round of Interop once these issues are resolved.",
-    "No consensus": "We wanted to let you know that this proposal was not selected to be part of Interop this year, as we did not have consensus for doing so. This should not be taken as a comment on the technology as a whole",
+    "No consensus": "We did not have consensus to include this proposal. This should not be taken as a comment on the technology as a whole",
 }
  

@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import time
 from typing import Iterable, Mapping
 
 import github
@@ -44,17 +45,18 @@ def load_proposals(proposals_file: str) -> Iterable[Mapping[str, str]]:
 
 def get_proposal_comments(proposals: Iterable[Mapping[str, str]]) -> Mapping[int, str]:
     comments = {}
-    for proposal in proposals:
+    for proposal in proposals[10:]:
         gh_id = int(proposal["ID"])
         reason_key = "Accept" if proposal["Consensus"] == "Include" else proposal["Response Type"]
         if reason_key not in responses.REASONS:
             print(f"Skipping proposal {gh_id} with reason {reason_key}")
             continue
-        reason = responses.REASONS[reason_key].format(proposal_name=proposal["Proposal"], proposal_type=proposal["Type"])
+        proposal_name = proposal["Proposal"].replace("<", "&lt;").replace("`&lt;", "`<")
+        reason = responses.REASONS[reason_key].format(proposal_name=proposal_name, proposal_type=proposal["Type"])
         if reason_key == "Accept":
             comment = reason
         else:
-            comment = responses.REJECT_TEMPLATE.format(title=proposal["Proposal"], reason=reason)
+            comment = responses.REJECT_TEMPLATE.format(title=proposal_name, reason=reason)
 
         comments[gh_id] = comment
     return comments
@@ -69,6 +71,7 @@ def submit_comments(repo: github.Repository.Repository, comments: Mapping[int, s
     for gh_id, comment in comments.items():
         issue = repo.get_issue(gh_id)
         issue.create_comment(comment)
+        time.sleep(1)
 
 
 def main():
