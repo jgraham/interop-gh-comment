@@ -6,12 +6,12 @@ from typing import Iterable, Mapping
 
 import github
 
-import responses
+from . import responses
 
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--submit", action="store_true", help="Path to CSV file containing responses")
+    parser.add_argument("--submit", action="store_true", help="Submit comments to GitHub")
     parser.add_argument("--repo", help="username/repo for GitHub repo")
     parser.add_argument("proposals_file", help="Path to CSV file containing responses")
     return parser
@@ -29,34 +29,24 @@ def load_proposals(proposals_file: str) -> Iterable[Mapping[str, str]]:
                 headers.append(header_lines[0].strip())
             else:
                 headers.append("")
-        proposal_type = "focus area"
         for row in reader:
-            if not row[1]:
-                proposal_type = "investigation"
-                continue
             row_data = {}
             for header, item in zip(headers, row):
                 assert isinstance(item, str)
                 row_data[header] = item
-            row_data["Type"] = proposal_type
             data.append(row_data)
     return data
 
 
 def get_proposal_comments(proposals: Iterable[Mapping[str, str]]) -> Mapping[int, str]:
     comments = {}
-    for proposal in proposals[10:]:
+    for proposal in proposals:
         gh_id = int(proposal["ID"])
-        reason_key = "Accept" if proposal["Consensus"] == "Include" else proposal["Response Type"]
-        if reason_key not in responses.REASONS:
-            print(f"Skipping proposal {gh_id} with reason {reason_key}")
-            continue
+        template_key = "ACCEPT_TEMPLATE" if proposal["Included"] == "TRUE" else "REJECT_TEMPLATE"
+        template = getattr(responses, template_key)
         proposal_name = proposal["Proposal"].replace("<", "&lt;").replace("`&lt;", "`<")
-        reason = responses.REASONS[reason_key].format(proposal_name=proposal_name, proposal_type=proposal["Type"])
-        if reason_key == "Accept":
-            comment = reason
-        else:
-            comment = responses.REJECT_TEMPLATE.format(title=proposal_name, reason=reason)
+        focus_area = proposal.get("Area", "").replace("<", "&lt;").replace("`&lt;", "`<")
+        comment = template.format(title=proposal_name, focus_area=focus_area, type=proposal["Type"].lower())
 
         comments[gh_id] = comment
     return comments
@@ -70,6 +60,7 @@ def print_comments(comments: Mapping[int, str]):
 def submit_comments(repo: github.Repository.Repository, comments: Mapping[int, str]) -> None:
     for gh_id, comment in comments.items():
         issue = repo.get_issue(gh_id)
+        print(issue)
         issue.create_comment(comment)
         time.sleep(1)
 
@@ -84,12 +75,13 @@ def main():
         if args.repo is None:
             raise ValueError("--repo is required to submit to GitHub")
         try:
-            token = github.Auth.Token(os.environ["GH_TOKEN"])
+            token = github.Auth.Token(os.environ["GH_TOKEN"].strip())
         except Exception:
             raise ValueError(f"Failed to read GH_TOKEN environment variable")
         gh = github.Github(auth=token)
         try:
             repo = gh.get_repo(args.repo)
+            print(repo.permissions)
         except Exception:
             raise ValueError(f"Failed to lookup repo {args.repo}")
     else:
