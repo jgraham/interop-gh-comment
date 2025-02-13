@@ -1,4 +1,4 @@
-REJECT_TEMPLATE = """Thank you for proposing "{title}" for inclusion in Interop 2025.
+REJECT_TEMPLATE = """Thank you for proposing {title} for inclusion in Interop 2025.
 
 We wanted to let you know that this proposal was not selected to be part of Interop this year.
 
@@ -9,9 +9,9 @@ For an overview of our process, see [proposal selection](https://github.com/web-
 _Posted on behalf of the Interop team._
 """
 
-ACCEPT_TEMPLATE = """Thank you for proposing "{title}" for inclusion in Interop 2025.
+ACCEPT_TEMPLATE = """Thank you for proposing {title} for inclusion in Interop 2025.
 
-We are pleased to let you know that this proposal was accepted as part of the "{focus_area}" {type}. You can follow the progress of this {type} on the [Interop 2025 dashboard](https://wpt.fyi/interop-2025).
+We are pleased to let you know that this proposal was accepted as part of the {focus_area} {type}. You can follow the progress of this {type} on the [Interop 2025 dashboard](https://wpt.fyi/interop-2025).
 
 For an overview of our process, see [proposal selection](https://github.com/web-platform-tests/interop/blob/main/2025/selection-process.md). Thank you for contributing to Interop 2025!
 
